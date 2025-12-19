@@ -48,11 +48,11 @@ public class Property extends AuditableEntity {
     private String status; // ACTIVE, INACTIVE, etc.
 
     // --- OPERACIÓN Y PRECIOS ---
-    @Column(name = "operation_type")
-    private String operationType;
+    ///@Column(name = "operation_type")
+    ///private String operationType;
 
-    private String currency; // U$S
-    private BigDecimal price;
+    ///private String currency; // U$S
+    ///private BigDecimal price;
     private String expenses;
 
     // --- DETALLES ---

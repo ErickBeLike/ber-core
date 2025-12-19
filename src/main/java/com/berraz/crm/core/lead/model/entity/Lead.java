@@ -28,13 +28,19 @@ public class Lead extends AuditableEntity {
 
     @Column(name = "client_state")
     private String clientState;
+    ///
+    @Column(name = "tiv_id")
+    private String tivId;
 
+    @Column(name = "client_url_ref")
+    private String clientUrlRef;
+    ///
     @Column(name = "is_private")
     private Boolean isPrivate;
 
     // --- ASIGNACIÓN ---
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "assigned_producer_id") // La columna física en la tabla leads
+    @JoinColumn(name = "producer_id") // La columna física en la tabla leads
     @ToString.Exclude
     private Producer producer;
 

@@ -18,8 +18,11 @@ public class PropertyMap {
     @Column(name = "google_map_link")
     private String googleMapLink;
 
-    private Double latitude;
-    private Double longitude;
+    @Column(name = "latitude")
+    private String latitude;
+
+    @Column(name = "longitude")
+    private String longitude;
 
     @Column(name = "waze_link")
     private String wazeLink;

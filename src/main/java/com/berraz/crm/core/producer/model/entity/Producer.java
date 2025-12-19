@@ -1,6 +1,7 @@
 package com.berraz.crm.core.producer.model.entity;
 
 import com.berraz.crm.core.common.model.AuditableEntity;
+import com.berraz.crm.core.development.entity.Development;
 import com.berraz.crm.core.lead.model.entity.Lead;
 import com.berraz.crm.core.property.model.entity.Property;
 import jakarta.persistence.*;
@@ -46,4 +47,13 @@ public class Producer extends AuditableEntity {
     @OneToMany(mappedBy = "producer", fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<Lead> assignedLeads = new ArrayList<>();
+
+    // ========================================================================
+    // NUEVA RELACIÓN MUCHOS A MUCHOS CON DEVELOPMENTS
+    // ========================================================================
+    // mappedBy apunta al nombre del CAMPO Java en la clase Development ("assignedProducers")
+    @ManyToMany(mappedBy = "assignedProducers", fetch = FetchType.LAZY)
+    @ToString.Exclude // Evita StackOverflowError
+    @EqualsAndHashCode.Exclude
+    private List<Development> developments = new ArrayList<>();
 }

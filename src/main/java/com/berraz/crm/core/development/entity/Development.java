@@ -5,6 +5,8 @@ import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import com.berraz.crm.core.producer.model.entity.Producer;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -82,6 +84,17 @@ public class Development {
     @OneToOne(mappedBy = "development", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private DevelopmentInternalData internalData;
 
-    @OneToOne(mappedBy = "development", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private DevelopmentProducerLink producerLink;
+    // ========================================================================
+    // NUEVA RELACIÓN MUCHOS A MUCHOS CON PRODUCERS
+    // ========================================================================
+    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+        name = "development_producers_link", // Nombre de la tabla intermedia en BD
+        joinColumns = @JoinColumn(name = "development_id"), // FK hacia esta entidad
+        inverseJoinColumns = @JoinColumn(name = "producer_id") // FK hacia la otra entidad
+    )
+    @ToString.Exclude // ¡IMPORTANTE! Para evitar bucles infinitos con Lombok
+    @EqualsAndHashCode.Exclude
+    @Builder.Default
+    private List<Producer> assignedProducers = new ArrayList<>();
 }

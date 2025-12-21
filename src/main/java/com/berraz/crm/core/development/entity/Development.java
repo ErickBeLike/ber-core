@@ -1,11 +1,10 @@
 package com.berraz.crm.core.development.entity;
 
+import com.berraz.crm.core.producer.model.entity.Producer;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
-
-import com.berraz.crm.core.producer.model.entity.Producer;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -25,16 +24,14 @@ public class Development {
     private Long id;
 
     @Column(name = "tiv_id", unique = true)
-    private String tivId; // ID del CRM
+    private String tivId;
 
     private String name;
     private String url;
-
-    // Campos informativos
-    private String category;            // Barrio Cerrado / Edificio
+    private String category;
     
     @Column(name = "construction_phase")
-    private String constructionPhase;   // Terminado / Pozo
+    private String constructionPhase;
     
     private String location;
     
@@ -44,22 +41,16 @@ public class Development {
     @Column(name = "possession_date")
     private String possessionDate;
     
-    private String status;              // Activo / Inactivo
+    private String status;
     
     @Column(name = "web_description", columnDefinition = "TEXT")
     private String webDescription;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    // --- JSONB (La magia para los detalles dinámicos) ---
     @Column(name = "details", columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
     private Map<String, Object> details;
 
-    // --- RELACIONES HIJAS (Uno a Muchos) ---
-    // Cascade ALL: Si borras el development, se borran sus fotos, videos, etc.
-    
+    // --- RELACIONES EXISTENTES ---
     @OneToMany(mappedBy = "development", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @Builder.Default
     private List<DevelopmentImage> images = new ArrayList<>();
@@ -76,8 +67,6 @@ public class Development {
     @Builder.Default
     private List<DevelopmentPublication> publications = new ArrayList<>();
 
-    // --- RELACIONES 1 a 1 (Datos Satélite) ---
-    
     @OneToOne(mappedBy = "development", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private DevelopmentMap map;
 
@@ -85,16 +74,14 @@ public class Development {
     private DevelopmentInternalData internalData;
 
     // ========================================================================
-    // NUEVA RELACIÓN MUCHOS A MUCHOS CON PRODUCERS
+    // CAMBIO: RELACIÓN MUCHOS A UNO (N:1)
     // ========================================================================
-    @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    @JoinTable(
-        name = "development_producers_link", // Nombre de la tabla intermedia en BD
-        joinColumns = @JoinColumn(name = "development_id"), // FK hacia esta entidad
-        inverseJoinColumns = @JoinColumn(name = "producer_id") // FK hacia la otra entidad
-    )
-    @ToString.Exclude // ¡IMPORTANTE! Para evitar bucles infinitos con Lombok
+    // Varios Developments tienen 1 Producer.
+    // Esto crea la columna "producer_id" en la tabla "developments".
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "producer_id") 
+    @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    @Builder.Default
-    private List<Producer> assignedProducers = new ArrayList<>();
+    private Producer producer;
 }

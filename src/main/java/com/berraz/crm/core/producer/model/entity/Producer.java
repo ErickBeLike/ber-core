@@ -52,8 +52,8 @@ public class Producer extends AuditableEntity {
     // NUEVA RELACIÓN MUCHOS A MUCHOS CON DEVELOPMENTS
     // ========================================================================
     // mappedBy apunta al nombre del CAMPO Java en la clase Development ("assignedProducers")
-    @ManyToMany(mappedBy = "assignedProducers", fetch = FetchType.LAZY)
-    @ToString.Exclude // Evita StackOverflowError
+    @OneToMany(mappedBy = "producer", fetch = FetchType.LAZY)
+    @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private List<Development> developments = new ArrayList<>();
+    private List<Development> developments; // Sin = new ArrayList<>();
 }

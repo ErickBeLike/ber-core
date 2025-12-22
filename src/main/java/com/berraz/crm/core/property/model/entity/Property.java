@@ -3,6 +3,7 @@ package com.berraz.crm.core.property.model.entity;
 import com.berraz.crm.core.common.model.AuditableEntity;
 import com.berraz.crm.core.common.util.converter.StringListConverter;
 import com.berraz.crm.core.common.util.converter.StringMapConverter;
+import com.berraz.crm.core.development.entity.Development;
 import com.berraz.crm.core.producer.model.entity.Producer;
 import com.berraz.crm.core.owner.model.entity.Owner;
 
@@ -135,4 +136,9 @@ public class Property extends AuditableEntity {
     @JoinColumn(name = "producer_id") 
     @ToString.Exclude
     private Producer producer;
+
+    @ManyToMany(mappedBy = "properties", fetch = FetchType.LAZY) // "properties" es el nombre de la variable en Development
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<Development> developments = new ArrayList<>();
 }

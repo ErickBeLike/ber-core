@@ -1,6 +1,8 @@
 package com.berraz.crm.core.development.entity;
 
 import com.berraz.crm.core.producer.model.entity.Producer;
+import com.berraz.crm.core.property.model.entity.Property;
+
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
@@ -73,15 +75,15 @@ public class Development {
     @OneToOne(mappedBy = "development", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private DevelopmentInternalData internalData;
 
-    // ========================================================================
-    // CAMBIO: RELACIÓN MUCHOS A UNO (N:1)
-    // ========================================================================
-    // Varios Developments tienen 1 Producer.
-    // Esto crea la columna "producer_id" en la tabla "developments".
-    
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "producer_id") 
+
+@ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+        name = "property_development_link",            // <--- 1. Nombre EXACTO de tu tabla en BD
+        joinColumns = @JoinColumn(name = "development_id"), // <--- 2. Nombre de la columna FK hacia Development
+        inverseJoinColumns = @JoinColumn(name = "property_id") // <--- 3. Nombre de la columna FK hacia Property
+    )
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Producer producer;
+    @Builder.Default
+    private List<Property> properties = new ArrayList<>();
 }

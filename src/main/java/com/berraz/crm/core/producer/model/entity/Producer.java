@@ -24,15 +24,15 @@ public class Producer extends AuditableEntity {
     // ID original de TIV (importante porque en los CSVs viejos usas este ID)
     // El Producer ID 54 en el CSV debe ser el Producer ID 54 aquí.
     // Tip: En la migración, fuerza el ID al guardar o usa un campo "legacy_id".
-    private Long legacyId;
+    //private Long legacyId;
 
     @Column(nullable = false)
     private String name;
 
     // En tu CSV viene un string largo: "(11) 5180... - info@..."
     // Guárdalo así por ahora, luego con un script lo limpias.
-    @Column(name = "office_contact")
-    private String officeContact;
+    //@Column(name = "office_contact")
+    //private String officeContact;
 
     private String email; // Para llenar después
     private String phone; // Para llenar después
@@ -46,4 +46,5 @@ public class Producer extends AuditableEntity {
     @OneToMany(mappedBy = "producer", fetch = FetchType.LAZY)
     @ToString.Exclude
     private List<Lead> assignedLeads = new ArrayList<>();
+
 }

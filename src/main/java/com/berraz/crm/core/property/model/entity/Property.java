@@ -1,8 +1,6 @@
 package com.berraz.crm.core.property.model.entity;
 
 import com.berraz.crm.core.common.model.AuditableEntity;
-import com.berraz.crm.core.common.util.converter.StringListConverter;
-import com.berraz.crm.core.common.util.converter.StringMapConverter;
 import com.berraz.crm.core.development.entity.Development;
 import com.berraz.crm.core.producer.model.entity.Producer;
 import com.berraz.crm.core.owner.model.entity.Owner;
@@ -10,11 +8,13 @@ import com.berraz.crm.core.owner.model.entity.Owner;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 @Entity
 @Table(name = "properties")
@@ -49,11 +49,11 @@ public class Property extends AuditableEntity {
     private String status; // ACTIVE, INACTIVE, etc.
 
     // --- OPERACIÓN Y PRECIOS ---
-    ///@Column(name = "operation_type")
-    ///private String operationType;
+    /// @Column(name = "operation_type")
+    /// private String operationType;
 
-    ///private String currency; // U$S
-    ///private BigDecimal price;
+    /// private String currency; // U$S
+    /// private BigDecimal price;
     private String expenses;
 
     // --- DETALLES ---
@@ -83,20 +83,20 @@ public class Property extends AuditableEntity {
 
     // --- JSON CONVERTERS (Listas y Mapas simples) ---
 
-    @Convert(converter = StringListConverter.class)
-    @Column(columnDefinition = "text") // Usar 'text' en Postgres es seguro y compatible
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
     private List<String> amenities = new ArrayList<>();
 
-    @Convert(converter = StringListConverter.class)
-    @Column(columnDefinition = "text")
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
     private List<String> tags = new ArrayList<>();
 
-    @Convert(converter = StringMapConverter.class)
-    @Column(name = "other_areas", columnDefinition = "text")
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
     private Map<String, String> otherAreas = new HashMap<>();
 
-    @Convert(converter = StringMapConverter.class)
-    @Column(columnDefinition = "text")
+    @JdbcTypeCode(SqlTypes.JSON)
+    @Column(columnDefinition = "jsonb")
     private Map<String, String> details = new HashMap<>();
 
     // --- RELACIONES SATÉLITE (1:1) ---
@@ -104,9 +104,7 @@ public class Property extends AuditableEntity {
     @OneToOne(mappedBy = "property", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private PropertyMap map;
 
-    
-    @OneToOne(mappedBy = "property", cascade = CascadeType.ALL, fetch =
-    FetchType.LAZY)
+    @OneToOne(mappedBy = "property", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private PropertyInternalData internalData;
 
     // --- RELACIONES MULTIMEDIA Y OTROS (1:N) ---
@@ -133,11 +131,12 @@ public class Property extends AuditableEntity {
 
     // PRODUCER RELATIONSHIP
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "producer_id") 
+    @JoinColumn(name = "producer_id")
     @ToString.Exclude
     private Producer producer;
 
-    @ManyToMany(mappedBy = "properties", fetch = FetchType.LAZY) // "properties" es el nombre de la variable en Development
+    @ManyToMany(mappedBy = "properties", fetch = FetchType.LAZY) // "properties" es el nombre de la variable en
+                                                                 // Development
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<Development> developments = new ArrayList<>();
